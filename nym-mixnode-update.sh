@@ -1,15 +1,15 @@
 #!/bin/bash
 
 
+set -x
 
 
-
-## Find the systemd.service file and its name 
+## Find the systemd.service file and its name
 service_name=$(find /etc/systemd/system/ -name "nym-mixnode*" | grep -v multi-user)
 
 function get_vars () {
-
-# Find the systemd.service file and its name 
+set -x
+# Find the systemd.service file and its name
 service_name=$(find /etc/systemd/system/ -name "nym-mixnode*" | grep -v multi-user)
 
 ## get mixnode full path so we could replace it precisely
@@ -30,7 +30,7 @@ else echo "Mixnode is not running, try to restart it with systemctl restart ${se
 fi
 
 function downloader () {
-#set -x
+set -x
 
 # set vars for version checking and url to download the latest release of nym-mixnode
 current_version=$(./nym-mixnode_linux_x86_64 --version | grep Nym | cut -c 13- )
@@ -53,4 +53,5 @@ else
    exit 1
 
 fi
-
+}
+get_vars && downloader
