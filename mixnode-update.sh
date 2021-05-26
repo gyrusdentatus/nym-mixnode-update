@@ -55,7 +55,7 @@ function downloader() {
 			echo " nym-mixnode.service is inactive or not existing. Downloading new binaries ...$(pwd)"
 		fi
 		echo "Fetching the latest version...$(pwd)"
-		curl -O nym-mixnode_linux_x86_64 ${URL}
+		curl -L -o nym-mixnode_linux_x86_64 ${URL}
 		chmod +x ./nym-mixnode_linux_x86_64
 		rm -f ${mixnode_path} && cp ./nym-mixnode_linux_x86_64 ${mixnode_path} && rm ./nym-mixnode_linux_x86_64
 		chown ${mixnode_user}:${mixnode_user} ${mixnode_path}
