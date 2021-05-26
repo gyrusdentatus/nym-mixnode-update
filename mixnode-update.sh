@@ -10,7 +10,7 @@ NOCOLOR='\033[0m'   # DEFAULT FONT
 
 # Find the systemd.service file and its name
 #service_name=$(find /etc/systemd/system/ -name "nym-mixnode*" | grep -v multi-user | cut -d / -f 5)
-service_name=$(find /etc/systemd/system/ -type f -name "nym-mixnode*" | grep -v multi-user | xargs basename)
+service_name=$(basename $(find /etc/systemd/system/ -type f -name "nym-mixnode*" | grep -v multi-user) 2>/dev/null)
 
 if [ "${service_name}" == "" ]; then
 	echo "Unit file not found, exitting"
