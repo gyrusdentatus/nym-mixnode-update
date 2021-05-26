@@ -26,11 +26,11 @@ fi
 
 ## get mixnode full path so we could replace it precisely
 
-mixnode_path=$(ps -A -o cmd | grep '[n]ym' | cut -d ' ' -f 1 | head -n 1)
+mixnode_path="$(readlink -f /proc/$(pgrep -fi nym-mixnode)/exe)"
 ## get user running the program if we needed chown
 mixnode_user=$(ps -A -o user | grep '[n]ym' | cut -d ' ' -f 1 | head -n 1)
 ## get binary name so we can change it later after download
-binary_name=$(ps -A -o cmd | grep '[n]ym' | cut -d ' ' -f 1 | xargs basename)
+binary_name="$(basename ${mixnode_path})"
 
 ## just testing if vars work properly
 #echo $mixnode_path
