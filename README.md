@@ -16,10 +16,11 @@ a simple shell script to update Nym mixnode to the latest version. (Draft versio
 
 ## Installation:
 
-```
+```sh
 git clone https://github.com/gyrusdentatus/nym-mixnode-update
 cd nym-mixnode-update
 chmod +x mixnode_update.sh
 ./mixnode_update.sh
-TODO: Make this thing much simpler just by parsing the systemd.service file, I had a hard time writing this funny and simple shell script because of some silly mistakes I'd missed. It was fun nevertheless !
 ```
+
+TODO: Make this thing much simpler just by parsing the systemd.service file, I had a hard time writing this funny and simple shell script because of some silly mistakes I'd missed. It was fun nevertheless !
