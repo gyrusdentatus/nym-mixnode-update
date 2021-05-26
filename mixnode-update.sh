@@ -73,7 +73,7 @@ sleep 2
 sudo -u $mixnode_user -H ./$binary_name upgrade --id $directory
 sleep 2
 elif [[ $USER = "root" ]]
-then cd /root/
+  then cd /root/
         select d in .nym/mixnodes/*; do test -n "$d" && break; printf "%b\n\n\n" "${WHITE} >>> Invalid Selection"; done
         directory=$(echo "$d" | rev | cut -d/ -f1 | rev)
 	printf "%b\n\n\n"
