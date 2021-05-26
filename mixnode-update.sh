@@ -10,23 +10,29 @@ NOCOLOR='\033[0m'   # DEFAULT FONT
 
 # Find the systemd.service file and its name
 #service_name=$(find /etc/systemd/system/ -name "nym-mixnode*" | grep -v multi-user | cut -d / -f 5)
+service_name=$(find /etc/systemd/system/ -type f -name "nym-mixnode*" | grep -v multi-user | xargs basename)
+
+if [ "${service_name}" == "" ]; then
+	echo "Unit file not found, exitting"
+	exit 1
+fi
+
 if pgrep -fi nym-mixnode >/dev/null 2>&1; then
 	echo "Node is running...proceeding"
 else
 	echo "Mixnode is not running, try to restart it with systemctl restart ${service_name} or run it please so this script could get all needed variables"
 	exit 1
 fi
-# Find the systemd.service file and its name
-service_name=$(find /etc/systemd/system/ -name "nym-mixnode*" | grep -v multi-user | xargs basename)
+
 ## get mixnode full path so we could replace it precisely
 
 mixnode_path=$(ps -A -o cmd | grep '[n]ym' | cut -d ' ' -f 1 | head -n 1)
 ## get user running the program if we needed chown
 mixnode_user=$(ps -A -o user | grep '[n]ym' | cut -d ' ' -f 1 | head -n 1)
 ## get binary name so we can change it later after download
-binary_name=$(ps -A -o cmd | grep '[n]ym' | cut -d ' ' -f 1 | head -n 1 | cut -d / -f 4)
+binary_name=$(ps -A -o cmd | grep '[n]ym' | cut -d ' ' -f 1 | xargs basename)
 
-## just testint if vars work properly
+## just testing if vars work properly
 #echo $mixnode_path
 #echo $mixnode_user
 #echo $binary_name
@@ -41,16 +47,16 @@ function downloader() {
 	echo ${service_name}
 	# Check if the version is up to date. If not, fetch the latest release.
 	#set -x
-	if [ ! -f "${mixnode_path}" ] || [ "$("${mixnode_path}" --version | grep Nym | cut -c 13-)" != "$VERSION" ]; then
-		if systemctl status "$service_name" | grep -e "active (running)" >/dev/null 2>&1 && echo $service_name; then
-			echo "stopping $service_name to update the node ..."
-			systemctl kill --signal=SIGINT $service_name
+	if [ ! -f "${mixnode_path}" ] || [ "${current_version}" != "$VERSION" ]; then
+		if systemctl status "${service_name}" | grep -e "active (running)" >/dev/null 2>&1 && echo ${service_name}; then
+			echo "stopping ${service_name} to update the node ..."
+			systemctl kill --signal=SIGINT ${service_name}
 		else
 			echo " nym-mixnode.service is inactive or not existing. Downloading new binaries ...$(pwd)"
 		fi
 		echo "Fetching the latest version...$(pwd)"
 		chmod +x ./nym-mixnode_linux_x86_64
-		rm -f ${mixnode_path} && cp ./nym-mixnode_linux_x86_64 $mixnode_path && rm ./nym-mixnode_linux_x86_64
+		rm -f ${mixnode_path} && cp ./nym-mixnode_linux_x86_64 ${mixnode_path} && rm ./nym-mixnode_linux_x86_64
 		chown ${mixnode_user}:${mixnode_user} ${mixnode_path}
 		curl -L -s "$URL" -o "nym-mixnode_linux_x86_64"
 
