@@ -85,6 +85,29 @@ function upgrade_nym() {
 		sleep 2
 	fi
 }
+  if [[ ("$1" = "--sign") ||  "$1" = "-g" ]]
+  then
+    printf "%b\n\n\n" "${WHITE} Please select a ${YELLOW} mixnode"
+    printf "%b\n\n\n"
+    select d in ${mixnode_path}.nym/mixnodes/* ; do test -n "$d" && break; printf "%b\n\n\n" "${WHITE} >>> Invalid Selection"; done
+    directory=$(printf "%b\n\n\n" "${WHITE}$d" | rev | cut -d/ -f1 | rev)
+    cd /home/nym || exit 2
+    printf "\e[1;82mYou selected\e[0m\e[3;11m ${WHITE} $directory\e[0m\n"
+    printf "%b\n\n\n"
+    printf "%b\n\n\n" "${WHITE} Enter your Telegram handle beginning with @"
+    printf "%b\n\n\n"
+    read telegram
+    printf "%b\n\n\n" "${WHITE} Your Telegram handle for the bot will be ${YELLOW} ${telegram} "
+    printf "%b\n\n\n"
+    printf "%b\n\n\n" "${WHITE} Enter your PUNK address"
+    printf "%b\n\n\n" 
+    read wallet
+    printf "%b\n\n\n" "${WHITE} --------------------------------------------------------------------------------"
+    # borrows a shell for nym user to initialize the node config.
+    #set -x
+    sudo -u nym -H /home/nym/nym-mixnode_linux_x86_64 sign --id $directory --text "${telegram} ${wallet}" 2>&1 | tee -a ${directory}_claim.txt && chown nym:nym ${directory}_claim.txt
+    printf "%b\n\n\n"
+  fi
 
 downloader && echo "ok" && sleep 2 || exit 1
 upgrade_nym && sleep 5 && systemctl start $service_name && printf "%b\n\n\n" "${WHITE} Check if the update was successful - ${YELLOW} systemctl status ${service_name}"
